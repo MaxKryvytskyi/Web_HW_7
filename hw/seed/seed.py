@@ -1,7 +1,8 @@
 from faker import Faker
 from ..src.conect_db import session
 from ..src.models import Student, Teacher, Gruops, Grades, Subjects
-from random import randint
+from random import randint, choice
+from datetime import datetime, date, timedelta
 
 
 
@@ -20,7 +21,50 @@ SUBJECTS = ["Англійська",
 fake = Faker('uk-UA')
 
 def create_grades():
-    pass
+    student_id = [num for num in range(1, STUDENT + 1)]
+    subjects_id = [num for num in range(1, SUBJECTS + 1)]
+    grades = [num for num in range(1, 13)]
+    n = STUDENT
+    while n > 0:
+        random_student = choice(student_id)
+        student_id.remove(random_student)
+        for _ in range(1, 21):
+            random_subjects = choice(subjects_id)
+            random_grades = choice(grades)
+            random_student
+
+
+
+
+
+
+    # start_date = datetime.strptime("2022-09-01", "%Y-%m-%d")
+    # end_date = datetime.strptime("2023-06-15", "%Y-%m-%d")
+
+    # def get_list_date(start: date, end: date):
+    #     result = []
+    #     current_data = start
+    #     while current_data <= end:
+    #         if current_data.isoweekday() < 6:
+    #             result.append(current_data)
+    #         current_data += timedelta(1)
+    #     return result
+
+    # list_dates = get_list_date(start_date, end_date)
+    # grades = []
+
+    # subjects = session.query(Subjects).all()
+    # students = session.query(Student).all()
+
+    # for day in list_dates:
+    #     random_subject = choice(subjects)
+    #     random_student = choice(students)
+
+    #     grades.append(Grades(subjects_id=random_subject.id,
+    #                         student_id=random_student.id, grade=randint(1, 12), day=day.date()))
+
+    # session.add_all(grades)
+    # session.commit()
 
 def create_subjects(subjects_name):
     for subject in subjects_name:
@@ -68,10 +112,10 @@ def create_students():
 
 def main():
     create_grades()
-    create_students()
-    create_teachers()
-    create_groups(GRUOPS_NAME)
-    create_subjects(SUBJECTS)
+    # create_students()
+    # create_teachers()
+    # create_groups(GRUOPS_NAME)
+    # create_subjects(SUBJECTS)
 
 if __name__ == '__main__':
     pass
