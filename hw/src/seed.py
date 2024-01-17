@@ -1,10 +1,8 @@
 from faker import Faker
-from ..src.conect_db import session
-from ..src.models import Student, Teacher, Gruops, Grades, Subjects
+from src.conect_db import session
+from src.models import Student, Teacher, Gruops, Grades, Subjects
 from random import randint, choice
 from datetime import datetime, date, timedelta
-
-
 
 STUDENT = 50
 TEACHER = 5
@@ -21,50 +19,48 @@ SUBJECTS = ["Англійська",
 fake = Faker('uk-UA')
 
 def create_grades():
+    number = 1000
+    start_date = datetime.strptime("2023-02-01", "%Y-%m-%d")
+    end_date = datetime.strptime("2024-02-15", "%Y-%m-%d")
+
+    def get_list_date(start: date, end: date):
+        result = []
+        current_data = start
+        while current_data <= end:
+            if current_data.isoweekday() < 6:
+                result.append(current_data)
+            current_data += timedelta(1)
+        return result
+
+    list_dates = get_list_date(start_date, end_date)
+
     student_id = [num for num in range(1, STUDENT + 1)]
-    subjects_id = [num for num in range(1, SUBJECTS + 1)]
+    subjects_id = [num for num in range(1, len(SUBJECTS) + 1)]
     grades = [num for num in range(1, 13)]
-    n = STUDENT
-    while n > 0:
-        random_student = choice(student_id)
-        student_id.remove(random_student)
-        for _ in range(1, 21):
-            random_subjects = choice(subjects_id)
-            random_grades = choice(grades)
-            random_student
+    grades_of_student = {f"{el}" : 0 for el in range(1, STUDENT + 1)}
+    
+    while number > 0:
+        for day_of in list_dates:
+            n = 6
+            for _ in range(1, n + 1):
+                random_student = choice(student_id)
+                random_subject = choice(subjects_id)
+                random_grade = choice(grades)
 
-
-
-
-
-
-    # start_date = datetime.strptime("2022-09-01", "%Y-%m-%d")
-    # end_date = datetime.strptime("2023-06-15", "%Y-%m-%d")
-
-    # def get_list_date(start: date, end: date):
-    #     result = []
-    #     current_data = start
-    #     while current_data <= end:
-    #         if current_data.isoweekday() < 6:
-    #             result.append(current_data)
-    #         current_data += timedelta(1)
-    #     return result
-
-    # list_dates = get_list_date(start_date, end_date)
-    # grades = []
-
-    # subjects = session.query(Subjects).all()
-    # students = session.query(Student).all()
-
-    # for day in list_dates:
-    #     random_subject = choice(subjects)
-    #     random_student = choice(students)
-
-    #     grades.append(Grades(subjects_id=random_subject.id,
-    #                         student_id=random_student.id, grade=randint(1, 12), day=day.date()))
-
-    # session.add_all(grades)
-    # session.commit()
+                if grades_of_student[str(random_student)] < 20:
+                    student_grade = Grades(
+                        student_id = random_student,
+                        subjects_id = random_subject,
+                        grade = random_grade,
+                        day = day_of
+                    )
+                    session.add(student_grade)
+                    grades_of_student[str(random_student)] += 1
+                    number -= 1
+                else:
+                    n += 1
+    else:
+        session.commit()
 
 def create_subjects(subjects_name):
     for subject in subjects_name:
@@ -104,18 +100,20 @@ def create_students():
             last_name=fake.last_name(),
             email=fake.ascii_free_email(),
             phone=fake.phone_number(),
-            address=fake.address()
+            address=fake.address(),
+            gruop_id = randint(1, 3)
         )
         session.add(student)
     session.commit()
 
 
 def main():
-    create_grades()
-    # create_students()
-    # create_teachers()
-    # create_groups(GRUOPS_NAME)
-    # create_subjects(SUBJECTS)
-
-if __name__ == '__main__':
     pass
+    create_students()
+    create_teachers()
+    create_groups(GRUOPS_NAME)
+    create_subjects(SUBJECTS)
+    create_grades()
+
+# if __name__ == '__main__':
+#     pass
