@@ -1,8 +1,10 @@
 from faker import Faker
-from conect_db import session, engine, text
-from models import Student, Teacher, Gruops, Grades, Subjects
+from conect_db import session
+from models import Student, Teacher, Gruops, Grades, Subjects, TeacherStudent
 from random import randint, choice
 from datetime import datetime, date, timedelta
+from sqlalchemy.orm import aliased
+from pprint import pprint
 
 STUDENT = 50
 TEACHER = 5
@@ -111,6 +113,29 @@ def create_students():
     session.commit()
     print("Student +")
 
+def create_teachers_to_students():
+    # Створення аліасу для моделі Teacher
+    teacher_alias = aliased(Teacher)
+    result = []
+    # Запит через ORM
+    for student in range(1, STUDENT + 1):
+        result.append((
+            session.query(Grades.student_id, teacher_alias.id.label('teacher_id'))
+            .join(Subjects, teacher_alias.id == Subjects.teacher_id)
+            .join(Grades, Subjects.id == Grades.subjects_id)
+            .filter_by(student_id=student)
+            .distinct()
+            .order_by(teacher_alias.id)
+            .all()
+        ))
+    # Виведення результатів
+    for el in result:
+        for row in el: 
+            print(f"Teacher ID: {row.teacher_id}, Student ID: {row.student_id}")
+            teacher_student = TeacherStudent(teacher_id=row.teacher_id, student_id=row.student_id)
+            session.add(teacher_student)
+    session.commit()
+    print("Teacher To Student +")
 
 def main():
     pass
@@ -119,6 +144,7 @@ def main():
     # create_subjects(SUBJECTS)
     # create_students()
     # create_grades()
+    # create_teachers_to_students()
 
 if __name__ == '__main__':
     main()
