@@ -1,6 +1,6 @@
 from faker import Faker
-from src.conect_db import session
-from src.models import Student, Teacher, Gruops, Grades, Subjects
+from conect_db import session, engine, text
+from models import Student, Teacher, Gruops, Grades, Subjects
 from random import randint, choice
 from datetime import datetime, date, timedelta
 
@@ -61,6 +61,7 @@ def create_grades():
                     n += 1
     else:
         session.commit()
+        print("Grades +")
 
 def create_subjects(subjects_name):
     for subject in subjects_name:
@@ -70,6 +71,7 @@ def create_subjects(subjects_name):
         )
         session.add(subjects)
     session.commit()
+    print("Subjects +")
 
 def create_groups(groups_name):
     for gruop_name in groups_name:
@@ -78,6 +80,7 @@ def create_groups(groups_name):
         )
         session.add(gruops)
     session.commit()
+    print("Gruops +")
 
 def create_teachers():
     for _ in range(1, TEACHER + 1):
@@ -91,6 +94,7 @@ def create_teachers():
         )
         session.add(teacher)
     session.commit()
+    print("Teacher +")
 
 
 def create_students():
@@ -105,15 +109,16 @@ def create_students():
         )
         session.add(student)
     session.commit()
+    print("Student +")
 
 
 def main():
     pass
-    create_students()
-    create_teachers()
-    create_groups(GRUOPS_NAME)
-    create_subjects(SUBJECTS)
-    create_grades()
+    # create_groups(GRUOPS_NAME)
+    # create_teachers()
+    # create_subjects(SUBJECTS)
+    # create_students()
+    # create_grades()
 
-# if __name__ == '__main__':
-#     pass
+if __name__ == '__main__':
+    main()

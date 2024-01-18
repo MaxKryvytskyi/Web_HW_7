@@ -4,6 +4,7 @@ import pathlib
 from sqlalchemy.engine import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import text
 
 file_config = pathlib.Path(__file__).parent.parent.joinpath('config.ini')
 config = configparser.ConfigParser()
