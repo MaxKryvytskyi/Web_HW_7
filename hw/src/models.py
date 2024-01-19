@@ -8,10 +8,10 @@ except ModuleNotFoundError:
 Base = declarative_base()
 
 
-class Gruops(Base):
+class Groups(Base):
     __tablename__ = "groups"
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String(15))
 
 
 class Teacher(Base):
@@ -38,8 +38,8 @@ class Student(Base):
     email = Column(String(150), nullable=False)
     phone = Column(String(150), nullable=False)
     address = Column(String(150), nullable=False)
-    gruop_id = Column(Integer, ForeignKey("groups.id", ondelete="CASCADE"))
-    group = relationship(Gruops)
+    group_id = Column(Integer, ForeignKey("groups.id", ondelete="CASCADE"))
+    groups = relationship(Groups)
     teachers = relationship("Teacher", secondary="teachers_to_students", back_populates="students")
     
     
@@ -60,7 +60,7 @@ class Subjects(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     teacher_id = Column(Integer, ForeignKey("teachers.id", ondelete="CASCADE"))
-
+    teacher = relationship(Teacher)
 
 class Grades(Base):
     __tablename__ = "grades"

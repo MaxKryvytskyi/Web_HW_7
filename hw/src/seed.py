@@ -4,7 +4,6 @@ from models import Student, Teacher, Gruops, Grades, Subjects, TeacherStudent
 from random import randint, choice
 from datetime import datetime, date, timedelta
 from sqlalchemy.orm import aliased
-from pprint import pprint
 
 STUDENT = 50
 TEACHER = 5
@@ -97,7 +96,6 @@ def create_teachers():
         session.add(teacher)
     session.commit()
     print("Teacher +")
-
 
 def create_students():
     for _ in range(1, STUDENT + 1):
