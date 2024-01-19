@@ -131,20 +131,19 @@ def create_teachers_to_students():
     # Виведення результатів
     for el in result:
         for row in el: 
-            print(f"Teacher ID: {row.teacher_id}, Student ID: {row.student_id}")
+            # print(f"Teacher ID: {row.teacher_id}, Student ID: {row.student_id}")
             teacher_student = TeacherStudent(teacher_id=row.teacher_id, student_id=row.student_id)
             session.add(teacher_student)
     session.commit()
     print("Teacher To Student +")
 
 def main():
-    pass
-    # create_groups(GRUOPS_NAME)
-    # create_teachers()
-    # create_subjects(SUBJECTS)
-    # create_students()
-    # create_grades()
-    # create_teachers_to_students()
+    create_groups(GRUOPS_NAME)
+    create_teachers()
+    create_subjects(SUBJECTS)
+    create_students()
+    create_grades()
+    create_teachers_to_students()
 
 if __name__ == '__main__':
     main()
