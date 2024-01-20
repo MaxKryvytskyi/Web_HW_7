@@ -9,8 +9,13 @@ parser.add_argument("--model", "-m")
 parser.add_argument("--name", "-n")
 parser.add_argument("--id")
 parser.add_argument("--desc")
+parser.add_argument("--group_id")
+parser.add_argument("--student_id")
+parser.add_argument("--subject_id")
+parser.add_argument("--teacher_id")
 
 user_arg = parser.parse_args()
+print(user_arg)
 
 def main():
     managers = {
