@@ -129,7 +129,7 @@ class SubjectManager(ModelsManager):
         for el in subject:
             print(f"Subject ID: {el.id} Subject name: {el.name}")
 
-
+# +
 class GradeManager(ModelsManager):
     def create_(self, user_arg):
         grade = Grade(grade=user_arg.grade, subject_id=user_arg.subject_id, student_id=user_arg.student_id)

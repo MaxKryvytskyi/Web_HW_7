@@ -1,4 +1,4 @@
-from sqlalchemy import  Column, Integer, String, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, ForeignKey, Date
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 
@@ -8,7 +8,6 @@ except ModuleNotFoundError:
     from src.connect_db import engine
 
 Base = declarative_base()
-
 
 class Group(Base):
     __tablename__ = "group"
@@ -64,6 +63,7 @@ class Subject(Base):
     teacher_id = Column(Integer, ForeignKey("teacher.id", ondelete="CASCADE"))
     teacher = relationship(Teacher)
 
+
 class Grade(Base):
     __tablename__ = "grade"
     id = Column(Integer, primary_key=True)
@@ -71,6 +71,7 @@ class Grade(Base):
     student_id = Column(Integer, ForeignKey("student.id", ondelete="CASCADE"))
     grade = Column(Integer)
     day = Column(Date)
+
 
 Base.metadata.create_all(engine)
 

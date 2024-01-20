@@ -1,19 +1,17 @@
 import argparse
 
-from src.models import Student, Subject, Teacher, Grade, Group
 from src.managers import TeacherManager, StudentManager, SubjectManager, GradeManager, GroupManager
 
 parser = argparse.ArgumentParser(description="CLI Application for CRUD operations with the database.")
 parser.add_argument("--action", "-a", help="Command: create, remove, update, list")
-parser.add_argument("--model", "-m")
-parser.add_argument("--name", "-n")
-parser.add_argument("--id")
-parser.add_argument("--desc")
-parser.add_argument("--group_id")
-parser.add_argument("--student_id")
-parser.add_argument("--subject_id")
-parser.add_argument("--teacher_id")
-parser.add_argument("--grade")
+parser.add_argument("--model", "-m", help="Model on which to perform the action.")
+parser.add_argument("--name", "-n", help="Name for the new record or updated record.")
+parser.add_argument("--id", type=int, help="ID of the record to update or remove.")
+parser.add_argument("--group_id", type=int, help="Group ID for Student creation.")
+parser.add_argument("--student_id", type=int, help="Student ID for Grade creation.")
+parser.add_argument("--subject_id", type=int, help="Subject ID for Grade creation.")
+parser.add_argument("--teacher_id", type=int, help="Teacher ID for Subject creation.")
+parser.add_argument("--grade", type=int, help="Grade value for Grade creation.")
 
 user_arg = parser.parse_args()
 print(user_arg)
@@ -35,22 +33,18 @@ def main():
     match user_arg.action:
         case "create":
             manager.create_(user_arg)
-            print("create True")
 
         case "update":
             manager.update_(user_arg)
-            print("update true")
 
         case "remove":
             manager.remove_(user_arg)
-            print("remove true")
 
         case "list":
             manager.list_(user_arg)
-            print("list true")
 
         case _:
-            print("error")
+            print("Error")
 
 if __name__ == "__main__":
     main()
