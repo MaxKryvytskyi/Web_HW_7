@@ -1,12 +1,11 @@
 from sqlalchemy import desc
 from datetime import datetime
-from pprint import pprint
 
 try:
-    from models import Student, Subjects, Teacher, Grades, Groups
+    from models import Student, Subject, Teacher, Grade, Group
     from connect_db import session
 except ModuleNotFoundError:
-    from src.models import Student, Subjects, Teacher, Grades, Groups
+    from src.models import Student, Subject, Teacher, Grade, Group
     from src.connect_db import session
 
 class ModelsManager:
@@ -75,15 +74,15 @@ class StudentManager(ModelsManager):
             print(f"Student ID: {el.id} \nStudent name: {el.full_name}\n")
 
 # +
-class GroupsManager(ModelsManager):
+class GroupManager(ModelsManager):
     def create_(self, user_arg):
-        group = Groups(name=user_arg.name)
+        group = Group(name=user_arg.name)
         self.session.add(group)
         self.session.commit()
         print(f"Created a group with the name {user_arg.name}")
 
     def update_(self, user_arg):
-        group = self.session.query(Groups).get(user_arg.group_id)
+        group = self.session.query(Group).get(user_arg.group_id)
         old_name = group.name
         group.name = user_arg.name
         self.session.add(group)
@@ -91,60 +90,75 @@ class GroupsManager(ModelsManager):
         print(f"Group name updated {old_name} --> {user_arg.name}")
 
     def remove_(self, user_arg):
-        group = self.session.query(Groups).get(user_arg.group_id)
+        group = self.session.query(Group).get(user_arg.group_id)
         self.session.delete(group)
         self.session.commit()
         print(F"{group.name} group deleted")
 
     def list_(self, user_arg):
-        group = self.session.query(Groups)
+        group = self.session.query(Group)
         for el in group:
             print(f"Group ID: {el.id} Group name: {el.name}")
 
 # +
-class SubjectsManager(ModelsManager):
+class SubjectManager(ModelsManager):
     def create_(self, user_arg):
-        subject = Subjects(name=user_arg.name, teacher_id=user_arg.teacher_id)
+        subject = Subject(name=user_arg.name, teacher_id=user_arg.teacher_id)
         self.session.add(subject)
         self.session.commit()
         print(f"Created subject")
 
     def update_(self, user_arg):
-        subject = self.session.query(Subjects).get(user_arg.subject_id)
-        old_name = subject.name
+        subject = self.session.query(Subject).get(user_arg.subject_id)
         if user_arg.name:
             subject.name = user_arg.name
         if user_arg.teacher_id:
             subject.teacher_id = user_arg.teacher_id
         self.session.add(subject)
         self.session.commit()
-        print(f"Subjects name updated")
+        print(f"Subject name updated")
 
     def remove_(self, user_arg):
-        subject = self.session.query(Subjects).get(user_arg.subject_id)
+        subject = self.session.query(Subject).get(user_arg.subject_id)
         self.session.delete(subject)
         self.session.commit()
-        print(F"Subjects deleted")
+        print(F"Subject deleted")
 
     def list_(self, user_arg):
-        subject = self.session.query(Subjects)
+        subject = self.session.query(Subject)
         for el in subject:
             print(f"Subject ID: {el.id} Subject name: {el.name}")
 
 
-
-class GradesManager(ModelsManager):
+class GradeManager(ModelsManager):
     def create_(self, user_arg):
-        print("create True")
+        grade = Grade(grade=user_arg.grade, subject_id=user_arg.subject_id, student_id=user_arg.student_id)
+        self.session.add(grade)               
+        self.session.commit()
+        print(f"Created grade")
 
     def update_(self, user_arg):
-        print("update true")
+        grade = self.session.query(Grade).get(user_arg.id)
+        if user_arg.subject_id:
+            grade.subject_id = user_arg.subject_id
+        if user_arg.student_id:
+            grade.student_id = user_arg.student_id
+        if user_arg.grade:
+            grade.grade = user_arg.grade
+        self.session.add(grade)
+        self.session.commit()
+        print(f"Grade updated")
 
     def remove_(self, user_arg):
-        print("remove true")
+        grade = self.session.query(Grade).get(user_arg.id)
+        self.session.delete(grade)
+        self.session.commit()
+        print(F"Grade deleted")
 
     def list_(self, user_arg):
-        print("list true")
+        grade = self.session.query(Grade)
+        for el in grade:
+            print(f"ID: {el.id} Subject ID: {el.subject_id} Student ID: {el.student_id} Grade: {el.grade} Date: {el.day}")
 
 
 

@@ -10,14 +10,14 @@ except ModuleNotFoundError:
 Base = declarative_base()
 
 
-class Groups(Base):
-    __tablename__ = "groups"
+class Group(Base):
+    __tablename__ = "group"
     id = Column(Integer, primary_key=True)
     name = Column(String(15))
 
 
 class Teacher(Base):
-    __tablename__ = "teachers"
+    __tablename__ = "teacher"
     id = Column(Integer, primary_key=True)
     first_name = Column(String(150), nullable=False)
     last_name = Column(String(150), nullable=False)
@@ -25,7 +25,7 @@ class Teacher(Base):
     phone = Column(String(150), nullable=True)
     address = Column(String(150), nullable=True)
     start_work = Column(Date, nullable=False)
-    students = relationship("Student", secondary="teachers_to_students", back_populates="teachers")
+    student = relationship("Student", secondary="teacher_to_student", back_populates="teacher")
 
     @hybrid_property
     def full_name(self):
@@ -33,16 +33,16 @@ class Teacher(Base):
               
 
 class Student(Base):
-    __tablename__ = "students"
+    __tablename__ = "student"
     id = Column(Integer, primary_key=True)
     first_name = Column(String(150), nullable=False)
     last_name = Column(String(150), nullable=False)
     email = Column(String(150), nullable=True)
     phone = Column(String(150), nullable=True)
     address = Column(String(150), nullable=True)
-    group_id = Column(Integer, ForeignKey("groups.id", ondelete="CASCADE"))
-    groups = relationship(Groups)
-    teachers = relationship("Teacher", secondary="teachers_to_students", back_populates="students")
+    group_id = Column(Integer, ForeignKey("group.id", ondelete="CASCADE"))
+    group = relationship(Group)
+    teacher = relationship("Teacher", secondary="teacher_to_student", back_populates="student")
     
     
     @hybrid_property
@@ -51,24 +51,24 @@ class Student(Base):
 
 
 class TeacherStudent(Base):
-    __tablename__ = "teachers_to_students"
+    __tablename__ = "teacher_to_student"
     id = Column(Integer, primary_key=True)
-    teacher_id = Column(Integer, ForeignKey("teachers.id", ondelete="CASCADE"))
-    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"))
+    teacher_id = Column(Integer, ForeignKey("teacher.id", ondelete="CASCADE"))
+    student_id = Column(Integer, ForeignKey("student.id", ondelete="CASCADE"))
 
 
-class Subjects(Base):
-    __tablename__ = "subjects"
+class Subject(Base):
+    __tablename__ = "subject"
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    teacher_id = Column(Integer, ForeignKey("teachers.id", ondelete="CASCADE"))
+    teacher_id = Column(Integer, ForeignKey("teacher.id", ondelete="CASCADE"))
     teacher = relationship(Teacher)
 
-class Grades(Base):
-    __tablename__ = "grades"
+class Grade(Base):
+    __tablename__ = "grade"
     id = Column(Integer, primary_key=True)
-    subjects_id = Column(Integer, ForeignKey("subjects.id", ondelete="CASCADE"))
-    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"))
+    subject_id = Column(Integer, ForeignKey("subject.id", ondelete="CASCADE"))
+    student_id = Column(Integer, ForeignKey("student.id", ondelete="CASCADE"))
     grade = Column(Integer)
     day = Column(Date)
 

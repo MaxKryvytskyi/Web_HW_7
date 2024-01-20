@@ -1,7 +1,7 @@
 import argparse
 
-from src.models import Student, Subjects, Teacher, Grades, Groups
-from src.managers import TeacherManager, StudentManager, SubjectsManager, GradesManager, GroupsManager
+from src.models import Student, Subject, Teacher, Grade, Group
+from src.managers import TeacherManager, StudentManager, SubjectManager, GradeManager, GroupManager
 
 parser = argparse.ArgumentParser(description="CLI Application for CRUD operations with the database.")
 parser.add_argument("--action", "-a", help="Command: create, remove, update, list")
@@ -13,6 +13,7 @@ parser.add_argument("--group_id")
 parser.add_argument("--student_id")
 parser.add_argument("--subject_id")
 parser.add_argument("--teacher_id")
+parser.add_argument("--grade")
 
 user_arg = parser.parse_args()
 print(user_arg)
@@ -20,10 +21,10 @@ print(user_arg)
 def main():
     managers = {
         "Teacher": TeacherManager(),
-        "Group": GroupsManager(),
+        "Group": GroupManager(),
         "Student": StudentManager(),
-        "Subject": SubjectsManager(),
-        "Grade": GradesManager()
+        "Subject": SubjectManager(),
+        "Grade": GradeManager()
     }
 
     if user_arg.model not in managers:

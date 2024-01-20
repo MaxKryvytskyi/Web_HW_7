@@ -1,10 +1,10 @@
 from sqlalchemy import func, desc
 
 try:
-    from models import Grades, Student, Subjects, Groups, Teacher
+    from models import Grade, Student, Subject, Group, Teacher
     from connect_db import session 
 except ModuleNotFoundError:
-    from src.models import Grades, Student, Subjects, Groups, Teacher
+    from src.models import Grade, Student, Subject, Group, Teacher
     from src.connect_db import session 
 
 
@@ -21,12 +21,12 @@ def select_1():
     results = (
         session.query(
             Student.full_name,
-            Grades.student_id,
-            func.avg(Grades.grade).label('average_grade')
+            Grade.student_id,
+            func.avg(Grade.grade).label('average_grade')
         )
-        .select_from(Grades)
-        .join(Student, Grades.student_id == Student.id)
-        .group_by(Student.id, Student.full_name, Grades.student_id)
+        .select_from(Grade)
+        .join(Student, Grade.student_id == Student.id)
+        .group_by(Student.id, Student.full_name, Grade.student_id)
         .order_by(desc('average_grade'))
         .limit(5)
         .all()
@@ -46,20 +46,20 @@ def select_2():
     # GROUP by student_id, s.first_name, s.last_name, s2.name
     # ORDER by AVG(grade) desc
     # limit 1
-    subjects_id = 4
+    subject_id = 4
     # Знайти студента із найвищим середнім балом з певного предмета.
     results = (
         session.query(
-            Grades.student_id,
+            Grade.student_id,
             Student.full_name,
-            func.avg(Grades.grade).label('average_grade'),
-            Subjects.name
+            func.avg(Grade.grade).label('average_grade'),
+            Subject.name
         )
-        .select_from(Grades)
-        .join(Student, Grades.student_id == Student.id)
-        .join(Subjects, Subjects.id == Grades.subjects_id)
-        .where(Subjects.id == subjects_id)
-        .group_by(Student.id, Grades.student_id, Subjects.name)
+        .select_from(Grade)
+        .join(Student, Grade.student_id == Student.id)
+        .join(Subject, Subject.id == Grade.subject_id)
+        .where(Subject.id == subject_id)
+        .group_by(Student.id, Grade.student_id, Subject.name)
         .order_by(desc('average_grade'))
         .limit(1)
         .all()
@@ -80,21 +80,21 @@ def select_3():
     # WHERE g2.id = 1 AND subjects.id = 1
     # GROUP BY g2.id, s.first_name, s.last_name, subjects.name, g2."name" 
     # ORDER BY average_grade DESC
-    subjects_id = 1
-    groups_id = 1
+    subject_id = 1
+    group_id = 1
     # Знайти середній бал у групах з певного предмета.
     results = (
         session.query(
             Student.full_name,
-            func.avg(Grades.grade).label('average_grade'),
-            Subjects.name.label('subject_name'),
-            Groups.name
+            func.avg(Grade.grade).label('average_grade'),
+            Subject.name.label('subject_name'),
+            Group.name
         ).select_from(Student)
-        .join(Grades, Student.id == Grades.student_id)
-        .join(Groups, Groups.id == Student.group_id)
-        .join(Subjects, Grades.subjects_id == Subjects.id)
-        .where(Groups.id == groups_id, Grades.subjects_id == subjects_id)
-        .group_by(Groups.id, Subjects.name, Groups.name)
+        .join(Grade, Student.id == Grade.student_id)
+        .join(Group, Group.id == Student.group_id)
+        .join(Subject, Grade.subject_id == Subject.id)
+        .where(Group.id == group_id, Grade.subject_id == subject_id)
+        .group_by(Group.id, Subject.name, Group.name)
         .order_by(desc('average_grade'))
         .all()
     )
@@ -111,8 +111,8 @@ def select_4():
     # Знайти середній бал на потоці (по всій таблиці оцінок).
     results = (
         session.query(
-            func.avg(Grades.grade).label('average_grade')
-        ).select_from(Grades)
+            func.avg(Grade.grade).label('average_grade')
+        ).select_from(Grade)
         .all()
     )
     # Виведення результатів
@@ -127,10 +127,10 @@ def select_5():
     # Знайти які курси читає певний викладач.
     results = (
         session.query(
-            Subjects.name,
+            Subject.name,
             Teacher.full_name
-        ).select_from(Subjects)
-        .join(Teacher, Teacher.id == Subjects.teacher_id)
+        ).select_from(Subject)
+        .join(Teacher, Teacher.id == Subject.teacher_id)
         .all()
     )
 
@@ -146,15 +146,15 @@ def select_6():
     # WHERE g2.id = 1
     # GROUP BY s.first_name, s.last_name, g2."name" 
 
-    groups_id = 1
+    group_id = 1
     # Знайти список студентів у певній групі.
     results = (
         session.query(
             Student.full_name,
-            Groups.name
+            Group.name
         ).select_from(Student)
-        .join(Groups, Groups.id == Student.group_id)
-        .where(Groups.id == groups_id)
+        .join(Group, Group.id == Student.group_id)
+        .where(Group.id == group_id)
         .order_by(Student.full_name)
         .all()
     )
@@ -173,21 +173,21 @@ def select_7():
     # WHERE g2.id = 1 AND subjects.id = 1
     # ORDER BY g.grade DESC
 
-    subjects_id = 1
-    groups_id = 1
+    subject_id = 1
+    group_id = 1
     # Знайти оцінки студентів у окремій групі з певного предмета.
     results = (
         session.query(
             Student.full_name,
-            Grades.grade,
-            Subjects.name.label("subject_name"),
-            Groups.name
+            Grade.grade,
+            Subject.name.label("subject_name"),
+            Group.name
         ).select_from(Student)
-        .join(Grades, Grades.student_id == Student.id)
-        .join(Groups, Groups.id == Student.group_id)
-        .join(Subjects, Grades.subjects_id == Subjects.id)
-        .where(Groups.id == groups_id, Subjects.id == subjects_id)
-        .order_by(desc(Grades.grade))
+        .join(Grade, Grade.student_id == Student.id)
+        .join(Group, Group.id == Student.group_id)
+        .join(Subject, Grade.subject_id == Subject.id)
+        .where(Group.id == group_id, Subject.id == subject_id)
+        .order_by(desc(Grade.grade))
         .all()
     )
 
@@ -211,14 +211,14 @@ def select_8():
     results = (
         session.query(
             Teacher.full_name,
-            Subjects.name,
-            func.avg(Grades.grade).label("average_grade")
+            Subject.name,
+            func.avg(Grade.grade).label("average_grade")
         )
-        .select_from(Subjects)
-        .join(Grades, Grades.subjects_id == Subjects.id)
-        .join(Teacher, Subjects.teacher_id == Teacher.id)
-        .where(Subjects.teacher_id == teacher_id)
-        .group_by(Teacher.full_name, Subjects.name)
+        .select_from(Subject)
+        .join(Grade, Grade.subject_id == Subject.id)
+        .join(Teacher, Subject.teacher_id == Teacher.id)
+        .where(Subject.teacher_id == teacher_id)
+        .group_by(Teacher.full_name, Subject.name)
         .all()
     )
 
@@ -240,14 +240,14 @@ def select_9():
     # Знайти список курсів, які відвідує певний студент.
     results = (
         session.query(
-        Subjects.name,
+        Subject.name,
         Student.full_name
     )
-    .select_from(Grades)
-    .join(Subjects, Subjects.id == Grades.subjects_id)
-    .join(Student, Student.id == Grades.student_id)
+    .select_from(Grade)
+    .join(Subject, Subject.id == Grade.subject_id)
+    .join(Student, Student.id == Grade.student_id)
     .where(Student.id == student_id)
-    .group_by(Subjects.name, Student.full_name)
+    .group_by(Subject.name, Student.full_name)
     )
 
     # Виведення результатів
@@ -269,23 +269,23 @@ def select_10():
     # Список курсів, які певному студенту читає певний викладач.
     results = (
         session.query(
-            Subjects.name,
+            Subject.name,
             Student.full_name.label("student_name"),
             Teacher.full_name.label("teacher_name"),
         )
-        .select_from(Grades)
-        .join(Subjects, Subjects.id == Grades.subjects_id)
-        .join(Student, Student.id == Grades.student_id)
-        .join(Teacher, Teacher.id == Subjects.teacher_id)
-        .where(Student.id == student_id, Subjects.teacher_id == teacher_id)
-        .group_by(Subjects.name, Student.full_name, Teacher.full_name)
+        .select_from(Grade)
+        .join(Subject, Subject.id == Grade.subject_id)
+        .join(Student, Student.id == Grade.student_id)
+        .join(Teacher, Teacher.id == Subject.teacher_id)
+        .where(Student.id == student_id, Subject.teacher_id == teacher_id)
+        .group_by(Subject.name, Student.full_name, Teacher.full_name)
     )
 
     # Виведення результатів
     print(f"Student name: {results[1].student_name}")
     print(f"Teacher name: {results[1].teacher_name}")
     for result in results:
-        print(f"Subjects name: {result.name}")
+        print(f"Subject name: {result.name}")
         
 def select_11():
     # SELECT (s.first_name , s.last_name) as student_name , (t.first_name, t.last_name) as teacher_name, avg(g.grade) AS average_grade
@@ -303,12 +303,12 @@ def select_11():
         session.query(
             Teacher.full_name.label("teacher_name"),
             Student.full_name.label("student_name"),
-            func.avg(Grades.grade).label("average_grade")
+            func.avg(Grade.grade).label("average_grade")
         )
-        .select_from(Grades)
-        .join(Subjects, Subjects.id == Grades.subjects_id)
-        .join(Student, Student.id == Grades.student_id)
-        .join(Teacher, Teacher.id == Subjects.teacher_id)
+        .select_from(Grade)
+        .join(Subject, Subject.id == Grade.subject_id)
+        .join(Student, Student.id == Grade.student_id)
+        .join(Teacher, Teacher.id == Subject.teacher_id)
         .where(Student.id == student_id, Teacher.id == teacher_id)
         .group_by(Student.full_name, Teacher.full_name)
         .all()
@@ -331,32 +331,32 @@ def select_12():
     # order by "day" desc  
     # limit 1
 
-    subjects_id = 1
-    groups_id = 1
+    subject_id = 1
+    group_id = 1
 
     # Оцінки студентів у певній групі з певного предмета на останньому занятті.
     results = (
         session.query(
-            Groups.name,
-            Subjects.name.label("subject_name"),
-            Grades.grade,
-            Grades.day,
+            Group.name,
+            Subject.name.label("subject_name"),
+            Grade.grade,
+            Grade.day,
             Student.full_name.label("student_name")
         )
-        .select_from(Groups)
-        .join(Student, Student.group_id == Groups.id)
-        .join(Grades, Grades.student_id == Student.id)
-        .join(Subjects, Subjects.id == Grades.subjects_id)
-        .where(Groups.id == groups_id, Subjects.id == subjects_id)
-        .group_by(Student.full_name, Groups.name, Subjects.name, Grades.grade, Grades.day)
-        .order_by(desc(Grades.day))
+        .select_from(Group)
+        .join(Student, Student.group_id == Group.id)
+        .join(Grade, Grade.student_id == Student.id)
+        .join(Subject, Subject.id == Grade.subject_id)
+        .where(Group.id == group_id, Subject.id == subject_id)
+        .group_by(Student.full_name, Group.name, Subject.name, Grade.grade, Grade.day)
+        .order_by(desc(Grade.day))
         .limit(1)
     )
 
     # Виведення результатів
     for result in results:
-        print(f"Gruops name: {result.name}")
-        print(f"Subjects name: {result.subject_name}")
+        print(f"Gruop name: {result.name}")
+        print(f"Subject name: {result.subject_name}")
         print(f"Student name: {result.student_name}")
         print(f"Grade: {result.grade}")
         print(f"Date: {result.day} \n")

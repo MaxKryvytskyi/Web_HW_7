@@ -5,10 +5,10 @@ from sqlalchemy.orm import aliased
 
 try:
     from connect_db import session
-    from models import Student, Teacher, Groups, Grades, Subjects, TeacherStudent
+    from models import Student, Teacher, Group, Grade, Subject, TeacherStudent
 except ModuleNotFoundError:
     from src.connect_db import session
-    from src.models import Student, Teacher, Groups, Grades, Subjects, TeacherStudent
+    from src.models import Student, Teacher, Group, Grade, Subject, TeacherStudent
 
 
 STUDENT = 50
@@ -55,7 +55,7 @@ def create_grades():
                 random_grade = choice(grades)
 
                 if grades_of_student[str(random_student)] < 20:
-                    student_grade = Grades(
+                    student_grade = Grade(
                         student_id = random_student,
                         subjects_id = random_subject,
                         grade = random_grade,
@@ -68,26 +68,26 @@ def create_grades():
                     n += 1
     else:
         session.commit()
-        print("Grades +")
+        print("Grade +")
 
 def create_subjects(subjects_name):
     for subject in subjects_name:
-        subjects = Subjects(
+        subjects = Subject(
             name = subject,
             teacher_id = randint(1, TEACHER)
         )
         session.add(subjects)
     session.commit()
-    print("Subjects +")
+    print("Subject +")
 
 def create_groups(groups_name):
     for group_name in groups_name:
-        gruops = Groups(
+        gruops = Group(
             name = group_name
         )
         session.add(gruops)
     session.commit()
-    print("Groups +")
+    print("Group +")
 
 def create_teachers():
     for _ in range(1, TEACHER + 1):
@@ -124,9 +124,9 @@ def create_teachers_to_students():
     # Запит через ORM
     for student in range(1, STUDENT + 1):
         result.append((
-            session.query(Grades.student_id, teacher_alias.id.label('teacher_id'))
-            .join(Subjects, teacher_alias.id == Subjects.teacher_id)
-            .join(Grades, Subjects.id == Grades.subjects_id)
+            session.query(Grade.student_id, teacher_alias.id.label('teacher_id'))
+            .join(Subject, teacher_alias.id == Subject.teacher_id)
+            .join(Grade, Subject.id == Grade.subject_id)
             .filter_by(student_id=student)
             .distinct()
             .order_by(teacher_alias.id)
