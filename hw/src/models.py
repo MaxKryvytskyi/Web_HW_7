@@ -1,10 +1,12 @@
 from sqlalchemy import  Column, Integer, String, ForeignKey, Date
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
+
 try:
-    from src.conect_db import engine
+    from connect_db import engine
 except ModuleNotFoundError:
-    from conect_db import engine
+    from src.connect_db import engine
+
 Base = declarative_base()
 
 

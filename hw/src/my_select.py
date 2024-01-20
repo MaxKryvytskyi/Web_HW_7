@@ -1,6 +1,12 @@
-from models import Grades, Student, Subjects, TeacherStudent, Groups, Teacher
 from sqlalchemy import func, desc
-from conect_db import session 
+
+try:
+    from models import Grades, Student, Subjects, Groups, Teacher
+    from connect_db import session 
+except ModuleNotFoundError:
+    from src.models import Grades, Student, Subjects, Groups, Teacher
+    from src.connect_db import session 
+
 
 def select_1():
     # select AVG(grade), s.first_name, s.last_name, student_id

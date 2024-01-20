@@ -1,13 +1,19 @@
 from faker import Faker
-from conect_db import session
-from models import Student, Teacher, Gruops, Grades, Subjects, TeacherStudent
 from random import randint, choice
 from datetime import datetime, date, timedelta
 from sqlalchemy.orm import aliased
 
+try:
+    from connect_db import session
+    from models import Student, Teacher, Groups, Grades, Subjects, TeacherStudent
+except ModuleNotFoundError:
+    from src.connect_db import session
+    from src.models import Student, Teacher, Groups, Grades, Subjects, TeacherStudent
+
+
 STUDENT = 50
 TEACHER = 5
-GRUOPS_NAME = ["Space - T43", "Sparta - F23", "Vavilon - D10"]
+GROUPS_NAME = ["Space - T43", "Sparta - F23", "Vavilon - D10"]
 SUBJECTS = ["Англійська",
             "Програмування",
             "Теорія імовірності",
@@ -75,13 +81,13 @@ def create_subjects(subjects_name):
     print("Subjects +")
 
 def create_groups(groups_name):
-    for gruop_name in groups_name:
-        gruops = Gruops(
-            name = gruop_name
+    for group_name in groups_name:
+        gruops = Groups(
+            name = group_name
         )
         session.add(gruops)
     session.commit()
-    print("Gruops +")
+    print("Groups +")
 
 def create_teachers():
     for _ in range(1, TEACHER + 1):
@@ -136,7 +142,7 @@ def create_teachers_to_students():
     print("Teacher To Student +")
 
 def main():
-    create_groups(GRUOPS_NAME)
+    create_groups(GROUPS_NAME)
     create_teachers()
     create_subjects(SUBJECTS)
     create_students()
