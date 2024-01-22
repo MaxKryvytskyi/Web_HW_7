@@ -13,7 +13,7 @@ except ModuleNotFoundError:
 
 STUDENT = 50
 TEACHER = 5
-GROUPS_NAME = ["Space - T43", "Sparta - F23", "Vavilon - D10"]
+GROUPS_NAME = ["Space-T43", "Sparta-F23", "Vavilon-D10"]
 SUBJECTS = ["Англійська",
             "Програмування",
             "Теорія імовірності",

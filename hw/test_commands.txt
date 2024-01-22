@@ -1,0 +1,45 @@
+py main.py --action create -m Teacher --name "Boris Jonson"
+py main.py --action list -m Teacher
+py main.py --action update -m Teacher --teacher_id 1 --name "Andry Bezos"
+py main.py --action list -m Teacher
+py main.py --action remove -m Teacher --teacher_id 1
+py main.py --action list -m Teacher
+
+py main.py --action create -m Group --name "Sparta-F23"
+py main.py --action create -m Group --name "Space-T43"
+py main.py --action list -m Group
+py main.py --action update -m Group --group_id 2 --name "Vavilon-D13"
+py main.py --action list -m Group
+py main.py --action remove -m Group --group_id 2
+py main.py --action list -m Group
+
+py main.py --action create -m Student --name "Emma Roberts" --group_id 1
+py main.py --action create -m Student --name "Ethan Bennett" --group_id 1
+py main.py --action list -m Student
+py main.py --action update -m Student --student_id 2 --name "Olivia Parker"
+py main.py --action list -m Student
+py main.py --action remove -m Student --student_id 2
+py main.py --action list -m Student
+
+py main.py --action create -m Subject --name "Англійська" --teacher_id 1
+py main.py --action create -m Subject --name "Програмування" --teacher_id 1
+py main.py --action create -m Subject --name "Вища математика"
+py main.py --action list -m Subject
+py main.py --action update -m Subject --subject_id 3 --name "Теорія Імовірності" --teacher_id 1
+py main.py --action list -m Subject
+py main.py --action remove -m Subject --subject_id 3
+py main.py --action list -m Student
+
+py main.py --action create -m Grade --grade 12 --student_id 1 --subject_id 2
+py main.py --action create -m Grade --grade 8 --student_id 1 --subject_id 1
+py main.py --action list -m Grade
+py main.py --action update -m Grade --grade 11 --id 2
+py main.py --action list -m Grade
+py main.py --action remove -m Grade --id 2
+py main.py --action list -m Grade
+
+py main.py --action create -m TeacherStudent 
+py main.py --action list -m TeacherStudent 
+py main.py --action remove -m TeacherStudent 
+py main.py --action list -m TeacherStudent 
+py main.py --action update -m TeacherStudent 

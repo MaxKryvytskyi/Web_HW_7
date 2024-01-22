@@ -2,10 +2,10 @@ from sqlalchemy import desc
 from datetime import datetime
 
 try:
-    from models import Student, Subject, Teacher, Grade, Group
+    from models import Student, Subject, Teacher, Grade, Group, TeacherStudent
     from connect_db import session
 except ModuleNotFoundError:
-    from src.models import Student, Subject, Teacher, Grade, Group
+    from src.models import Student, Subject, Teacher, Grade, Group, TeacherStudent
     from src.connect_db import session
 
 class ModelsManager:
@@ -37,11 +37,11 @@ class TeacherManager(ModelsManager):
         self.session.commit()
         print(F"{teacher.full_name} teacher deleted")
 
-    def list_(self, user_arg):
+    def list_(self):
         teacher = self.session.query(Teacher)
         print("Teacher")
         for el in teacher:
-            print(f"ID: {el.id} \nName: {el.full_name} \nWork: {el.start_work}\n")
+            print(f"ID: {el.id} \nName: {el.full_name} \nWork start: {el.start_work}\n")
 
 # +
 class StudentManager(ModelsManager):
@@ -68,7 +68,7 @@ class StudentManager(ModelsManager):
         self.session.commit()
         print(F"{student.full_name} student deleted")
 
-    def list_(self, user_arg):
+    def list_(self):
         student = self.session.query(Student)
         for el in student:
             print(f"Student ID: {el.id} \nStudent name: {el.full_name}\n")
@@ -95,7 +95,7 @@ class GroupManager(ModelsManager):
         self.session.commit()
         print(F"{group.name} group deleted")
 
-    def list_(self, user_arg):
+    def list_(self):
         group = self.session.query(Group)
         for el in group:
             print(f"Group ID: {el.id} Group name: {el.name}")
@@ -124,15 +124,15 @@ class SubjectManager(ModelsManager):
         self.session.commit()
         print(F"Subject deleted")
 
-    def list_(self, user_arg):
+    def list_(self):
         subject = self.session.query(Subject)
         for el in subject:
-            print(f"Subject ID: {el.id} Subject name: {el.name}")
+            print(f"Subject ID: {el.id} Subject name: {el.name} Teacher ID: {el.teacher_id}")
 
 # +
 class GradeManager(ModelsManager):
     def create_(self, user_arg):
-        grade = Grade(grade=user_arg.grade, subject_id=user_arg.subject_id, student_id=user_arg.student_id)
+        grade = Grade(grade=user_arg.grade, subject_id=user_arg.subject_id, student_id=user_arg.student_id, day=datetime.now())
         self.session.add(grade)               
         self.session.commit()
         print(f"Created grade")
@@ -145,6 +145,7 @@ class GradeManager(ModelsManager):
             grade.student_id = user_arg.student_id
         if user_arg.grade:
             grade.grade = user_arg.grade
+            grade.day = datetime.now()
         self.session.add(grade)
         self.session.commit()
         print(f"Grade updated")
@@ -155,10 +156,48 @@ class GradeManager(ModelsManager):
         self.session.commit()
         print(F"Grade deleted")
 
-    def list_(self, user_arg):
+    def list_(self):
         grade = self.session.query(Grade)
         for el in grade:
             print(f"ID: {el.id} Subject ID: {el.subject_id} Student ID: {el.student_id} Grade: {el.grade} Date: {el.day}")
 
+from sqlalchemy.orm import aliased
+class TeacherStudentManager(ModelsManager):
+    def create_(self, _):
+        teacher_alias = aliased(Teacher)
+        result = []
 
+        for student in range(self.session.query(Student).count() + 1):
+            result.append((
+                session.query(Grade.student_id, teacher_alias.id.label('teacher_id'))
+                .join(Subject, teacher_alias.id == Subject.teacher_id)
+                .join(Grade, Subject.id == Grade.subject_id)
+                .filter_by(student_id=student)
+                .distinct()
+                .order_by(teacher_alias.id)
+                .all()
+            ))
 
+        for el in result:
+            for row in el: 
+                teacher_student = TeacherStudent(teacher_id=row.teacher_id, student_id=row.student_id)
+                session.add(teacher_student)
+        session.commit()
+        print("Created 'Teacher - Students'")
+
+    def update_(self, _):
+        self.remove_(_)
+        self.create_(_)
+        self.list_()
+
+    def remove_(self, _):
+        teacher_to_student = self.session.query(TeacherStudent).all()
+        for el in teacher_to_student:
+            self.session.delete(el)
+        self.session.commit()
+        print(F"Teacher-Student deleted")
+
+    def list_(self):
+        grade = self.session.query(TeacherStudent)
+        for el in grade:
+            print(f"ID: {el.id} Teacher ID: {el.teacher_id} Student ID: {el.student_id}")   
