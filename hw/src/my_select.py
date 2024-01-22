@@ -94,16 +94,16 @@ def select_3():
         .join(Group, Group.id == Student.group_id)
         .join(Subject, Grade.subject_id == Subject.id)
         .where(Group.id == group_id, Grade.subject_id == subject_id)
-        .group_by(Group.id, Subject.name, Group.name)
+        .group_by(Group.id, Subject.name, Group.name, Student.full_name)
         .order_by(desc('average_grade'))
         .all()
     )
     # Виведення результатів
     for result in results:
         print(f"Name: {result.full_name}")
-        print(f"Average Grade: {round(result.average_grade, 2)}")
+        print(f"Average grade: {round(result.average_grade, 2)}")
         print(f"Name subjects: {result.subject_name}")
-        print(f"Gruop subjects: {result.name} \n")
+        print(f"Gruop name: {result.name} \n")
 
 def select_4():
     # select AVG(g.grade) 
@@ -206,7 +206,7 @@ def select_8():
     # where s.teacher_id = 1
     # group by t.first_name, t.last_name, s."name"
 
-    teacher_id = 1
+    teacher_id = 2
     # Знайти середній бал, який ставить певний викладач зі своїх предметів.
     results = (
         session.query(
@@ -221,12 +221,14 @@ def select_8():
         .group_by(Teacher.full_name, Subject.name)
         .all()
     )
-
-    # Виведення результатів
-    for result in results:
-        print(f"Teacher name: {result.full_name}")
-        print(f"Subjects name: {result.name}")
-        print(f"Average Grade: {result.average_grade} \n")
+    if not results:
+        print("No Teacher")
+    else:
+        # Виведення результатів
+        for result in results:
+            print(f"Teacher name: {result.full_name}")
+            print(f"Subjects name: {result.name}")
+            print(f"Average Grade: {result.average_grade} \n")
 
 def select_9():
     # select s2."name", s.first_name, s.last_name 
@@ -280,12 +282,14 @@ def select_10():
         .where(Student.id == student_id, Subject.teacher_id == teacher_id)
         .group_by(Subject.name, Student.full_name, Teacher.full_name)
     )
-
-    # Виведення результатів
-    print(f"Student name: {results[1].student_name}")
-    print(f"Teacher name: {results[1].teacher_name}")
-    for result in results:
-        print(f"Subject name: {result.name}")
+    if not results:
+        print("No teacher")
+    else:
+        # Виведення результатів
+        print(f"Student name: {results[1].student_name}")
+        print(f"Teacher name: {results[1].teacher_name}")
+        for result in results:
+            print(f"Subject name: {result.name}")
         
 def select_11():
     # SELECT (s.first_name , s.last_name) as student_name , (t.first_name, t.last_name) as teacher_name, avg(g.grade) AS average_grade
@@ -296,8 +300,8 @@ def select_11():
     # WHERE s.id = 1 AND t.id = 3
     # GROUP BY student_name , teacher_name
     
-    student_id = 1
-    teacher_id = 1
+    student_id = 2
+    teacher_id = 2
     # Середній бал, який певний викладач ставить певному студентові.
     results = (
         session.query(
@@ -313,12 +317,14 @@ def select_11():
         .group_by(Student.full_name, Teacher.full_name)
         .all()
     )
-
-    # Виведення результатів
-    for result in results:
-        print(f"Teacher name: {result.teacher_name}")
-        print(f"Student name: {result.student_name}")
-        print(f"Average Grade: {result.average_grade} \n")
+    if not results:
+        print("Not found")
+    else:
+        # Виведення результатів
+        for result in results:
+            print(f"Teacher name: {result.teacher_name}")
+            print(f"Student name: {result.student_name}")
+            print(f"Average Grade: {result.average_grade} \n")
 
 def select_12():
     # SELECT g.name, s2.name, g2.grade, g2."day", s.first_name, s.last_name 

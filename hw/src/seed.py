@@ -25,67 +25,12 @@ SUBJECTS = ["Англійська",
 
 fake = Faker('uk-UA')
 
-def create_grades():
-    number = 1000
-    start_date = datetime.strptime("2023-02-01", "%Y-%m-%d")
-    end_date = datetime.strptime("2024-02-15", "%Y-%m-%d")
-
-    def get_list_date(start: date, end: date):
-        result = []
-        current_data = start
-        while current_data <= end:
-            if current_data.isoweekday() < 6:
-                result.append(current_data)
-            current_data += timedelta(1)
-        return result
-
-    list_dates = get_list_date(start_date, end_date)
-
-    student_id = [num for num in range(1, STUDENT + 1)]
-    subjects_id = [num for num in range(1, len(SUBJECTS) + 1)]
-    grades = [num for num in range(1, 13)]
-    grades_of_student = {f"{el}" : 0 for el in range(1, STUDENT + 1)}
-    
-    while number > 0:
-        for day_of in list_dates:
-            n = 6
-            for _ in range(1, n + 1):
-                random_student = choice(student_id)
-                random_subject = choice(subjects_id)
-                random_grade = choice(grades)
-
-                if grades_of_student[str(random_student)] < 20:
-                    student_grade = Grade(
-                        student_id = random_student,
-                        subjects_id = random_subject,
-                        grade = random_grade,
-                        day = day_of
-                    )
-                    session.add(student_grade)
-                    grades_of_student[str(random_student)] += 1
-                    number -= 1
-                else:
-                    n += 1
-    else:
-        session.commit()
-        print("Grade +")
-
-def create_subjects(subjects_name):
-    for subject in subjects_name:
-        subjects = Subject(
-            name = subject,
-            teacher_id = randint(1, TEACHER)
-        )
-        session.add(subjects)
-    session.commit()
-    print("Subject +")
-
 def create_groups(groups_name):
     for group_name in groups_name:
-        gruops = Group(
+        gruop = Group(
             name = group_name
         )
-        session.add(gruops)
+        session.add(gruop)
     session.commit()
     print("Group +")
 
@@ -103,6 +48,16 @@ def create_teachers():
     session.commit()
     print("Teacher +")
 
+def create_subjects(subjects_name):
+    for subject_name in subjects_name:
+        subject = Subject(
+            name = subject_name,
+            teacher_id = randint(1, TEACHER)
+        )
+        session.add(subject)
+    session.commit()
+    print("Subject +")
+
 def create_students():
     for _ in range(1, STUDENT + 1):
         student = Student(
@@ -111,11 +66,56 @@ def create_students():
             email=fake.ascii_free_email(),
             phone=fake.phone_number(),
             address=fake.address(),
-            gruop_id = randint(1, 3)
+            group_id = randint(1, 3)
         )
         session.add(student)
     session.commit()
     print("Student +")
+
+def create_grades():
+    number = 1000
+    start_date = datetime.strptime("2023-02-01", "%Y-%m-%d")
+    end_date = datetime.strptime("2024-02-15", "%Y-%m-%d")
+
+    def get_list_date(start: date, end: date):
+        result = []
+        current_data = start
+        while current_data <= end:
+            if current_data.isoweekday() < 6:
+                result.append(current_data)
+            current_data += timedelta(1)
+        return result
+
+    list_dates = get_list_date(start_date, end_date)
+
+    student_id = [num for num in range(1, STUDENT + 1)]
+    subject_id = [num for num in range(1, len(SUBJECTS) + 1)]
+    grades = [num for num in range(1, 13)]
+    grades_of_student = {f"{el}" : 0 for el in range(1, STUDENT + 1)}
+    
+    while number > 0:
+        for day_of in list_dates:
+            n = 6
+            for _ in range(1, n + 1):
+                random_student = choice(student_id)
+                random_subject = choice(subject_id)
+                random_grade = choice(grades)
+
+                if grades_of_student[str(random_student)] < 20:
+                    student_grade = Grade(
+                        student_id = random_student,
+                        subject_id = random_subject,
+                        grade = random_grade,
+                        day = day_of
+                    )
+                    session.add(student_grade)
+                    grades_of_student[str(random_student)] += 1
+                    number -= 1
+                else:
+                    n += 1
+    else:
+        session.commit()
+        print("Grade +")
 
 def create_teachers_to_students():
     # Створення аліасу для моделі Teacher
